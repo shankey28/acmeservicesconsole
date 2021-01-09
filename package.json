@@ -1,0 +1,52 @@
+{
+  "name": "acmeresumeservice",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@aws-sdk/client-cloudwatch-logs": "^3.1.0",
+    "@aws-sdk/client-dynamodb": "^3.1.0",
+    "aws-amplify": "^3.3.13",
+    "commander": "^2.11.0",
+    "core-js": "^3.6.5",
+    "csv-parse": "^4.14.2",
+    "fs": "0.0.1-security",
+    "inquirer": "^4.0.0",
+    "moment": "^2.29.1",
+    "uuid": "^8.3.2",
+    "uuidv4": "^6.2.6",
+    "apollo-cache-inmemory": "^1.1.0",
+    "apollo-client": "^2.0.3",
+    "apollo-link": "^1.0.3",
+    "apollo-link-http": "^1.2.0",
+    "aws-sdk": "^2.141.0",
+    "aws-appsync": "^1.0.0",
+    "es6-promise": "^4.1.1",
+    "graphql": "^0.11.7",
+    "graphql-tag": "^2.5.0",
+    "isomorphic-fetch": "^2.2.1",
+    "ws": "^3.3.1"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {
+      "no-console": 1,
+      "no-debugger": 1
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "devDependencies": {}
+}

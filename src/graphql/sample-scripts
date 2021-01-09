@@ -1,0 +1,106 @@
+mutation createapplicant{
+  createApplicantProfile(input:{appStatus:New,caFocus:Other,name:"Chris Johnson",userName:"user123",yOe:Morethan4})
+  {
+    id
+  }
+}
+
+mutation createapplicant{
+  createApplicantProfile(input:{appStatus:New,caFocus:Other,name:"Chris Mack",userName:"user124",yOe:Lessthan4})
+  {
+    id
+  }
+}
+
+mutation createapplicant{
+  createApplicantProfile(input:{appStatus:New,caFocus:Other,name:"Lyla Mack",userName:"user125",yOe:Lessthan4,gender:Female})
+  {
+    id
+  }
+}
+
+mutation createapplicant{
+  createApplicantProfile(input:{appStatus:New,caFocus:Other,name:"Nicole Tanner",userName:"user126",yOe:Morethan4,gender:Female})
+  {
+    id
+  }
+}
+
+mutation createapplicant{
+  createApplicantProfile(input:{appStatus:New,caFocus:HealthCare,name:"Nick Tanner",userName:"user127",yOe:Lessthan4,gender:Male})
+  {
+    id
+  }
+}
+
+mutation updateProfile{
+  updateApplicantProfile(input:{userName:"user125",appStatus:SubmittedToEmployer,id:"69592d7e-993a-4c9b-8794-c72a40bf37fc"}){
+    id
+    
+  }
+}
+
+
+--Query
+
+query getApplicant{
+  getApplicantProfile(userName:"user126"){
+    id
+    name
+    comments{
+      items{
+        comment
+      }
+    }
+    
+  }
+}
+
+
+Other recruiter
+query listAppProfiles{
+  listApplicantProfiles(filter:{caFocus:{eq:Other},yOe:{eq:Lessthan4}}){
+    items{
+      userName
+    }
+  }
+}
+
+
+HealthCare recruiter
+query listAppProfiles{
+  listApplicantProfiles(filter:{caFocus:{eq:HealthCare}}){
+    items{
+      userName
+    }
+  }
+  
+}
+
+More than 4 year
+query listAppProfiles{
+  listApplicantProfiles(filter:{yOe:{eq:Morethan4}}){
+    items{
+      userName
+    }
+  }
+  
+}
+
+Female listApplicants
+query listAppProfiles{
+  listApplicantProfiles(filter:{gender:{eq:Female}}){
+    items{
+      userName
+    }
+  }
+  
+}
+
+Create recruiter comment
+mutation createcomment{
+  createRecuriterComment(input:{candidateID:"39c8cdc9-5561-4627-ac53-54da1e95bea0",comment:"Spelling errors need to be corrected"}){
+    candidateID
+    comment
+  }
+}
