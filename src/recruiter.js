@@ -1,4 +1,5 @@
 const applicants = require("./modules/applicantInfo");
+const logger = require("./api/cw");
 const inquirer = require("inquirer");
 
 const recruiterWorkFlow =  ({token,username,tenant})=> {
@@ -41,6 +42,7 @@ const recruiterWorkFlow =  ({token,username,tenant})=> {
                 .then((res)=>{
                     if(res)
                     console.log("Comment added successfully");
+                    logger.processLogs(username,tenant,`Candidate ${applicantUserName} added comment`)
                 })
 
             }).catch((err)=>{
@@ -90,7 +92,10 @@ const recruiterWorkFlow =  ({token,username,tenant})=> {
             }
             //Refer candidate to employer
             applicants.updateApplicantInfo(applicantInfo,token)
-            .then((res) => console.log("Candidate referred to employer succesfully"))
+            .then((res) => {
+                console.log("Candidate referred to employer succesfully");
+                logger.processLogs(username,tenant,`Candidate ${applicantUserName} resume submitted to employer`)
+            })
             .catch((err)=>console.log("Error referring candidate",err));
 
         })

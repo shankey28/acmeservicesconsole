@@ -1,7 +1,6 @@
 const applicants = require("./modules/applicantInfo");
 const inquirer = require("inquirer");
-
-
+const logger = require("./api/cw");
 
 const employerWorkFlow =  ({token,username,tenant})=> {
     //Get Employer's choice
@@ -56,7 +55,10 @@ const employerWorkFlow =  ({token,username,tenant})=> {
          }
          //Set candidate status to EmployerInterview
          applicants.updateApplicantInfo(applicantInfo,token)
-         .then((res) => console.log("Candidate scheduled for interview"))
+         .then((res) => {
+             console.log("Candidate scheduled for interview");
+             logger.processLogs(username,tenant,`Schedule candidate ${applicantUserName} for Interview`)
+         })
          .catch((err)=>console.log("Error scheduling candidate interview",err));
 
          })
@@ -104,7 +106,10 @@ const employerWorkFlow =  ({token,username,tenant})=> {
          }
          //Set the applicant status to EmployerOffered
          applicants.updateApplicantInfo(applicantInfo,token)
-         .then((res) => console.log("Candidate offered employment succesfully"))
+         .then((res) => {
+             console.log("Candidate offered employment succesfully");
+             logger.processLogs(username,tenant,`Offered candidate ${applicantUserName}`)
+         })
          .catch((err)=>console.log("Error referring candidate",err));
 
      })

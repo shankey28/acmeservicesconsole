@@ -4,12 +4,12 @@ const {
     CreateLogStreamCommand,
     PutLogEventsCommand,
   } = require("@aws-sdk/client-cloudwatch-logs");
+  const Auth = require('aws-amplify').Auth;
 
 const moment = require("moment")
 
-  export default {
-
-      async processLogs(cred,username, usergroup, action){
+      const processLogs = async (username, usergroup, action)=>{
+          const cred = await Auth.currentCredentials();
           const currmin = moment().format("mm") % 10
           const streamname = usergroup +"-"+ moment().subtract(currmin,"m").format("YYYY-MM-DD-HH-mm");
           let cwclient = new CloudWatchLogsClient({
@@ -28,13 +28,13 @@ const moment = require("moment")
 
           const streaminfo = await cwclient.send(new DescribeLogStreamsCommand(params))
 
-          const logeventdata = await this.putLogStreamData(cred,username, usergroup, action,streaminfo, streamname);
+          const logeventdata = await putLogStreamData(cred,username, usergroup, action,streaminfo, streamname);
 
           return logeventdata;
 
-      },
+      }
 
-      async putLogStreamData(cred,username, usergroup, action,streaminfo, streamname){
+      const putLogStreamData = async (cred,username, usergroup, action,streaminfo, streamname)=>{
 
         const date = new Date().valueOf();
         let cwclient = new CloudWatchLogsClient({
@@ -90,4 +90,6 @@ const moment = require("moment")
 
       }
 
-  }
+      module.exports = {
+        processLogs
+      }

@@ -1,7 +1,6 @@
 const applicants = require("./modules/applicantInfo");
 const inquirer = require("inquirer");
-
-
+const logger = require("./api/cw");
 
 const applicantWorkFlow =  ({token,username,tenant})=> {
     //Get Applicant status data choice
@@ -25,6 +24,7 @@ const applicantWorkFlow =  ({token,username,tenant})=> {
                     applicants.updateApplicantInfo(applicantInfo,token).then((res)=>{
                         applicants.updateActivity(username,"OfferAccepted").then((res)=>{
                             console.log("Offer Accepted!")
+                            logger.processLogs(username,tenant,`Candidate ${username} Accepted offer`)
                     
                         })
                     }).catch((err)=>console.log("Error Accepting Offer"));
@@ -41,6 +41,7 @@ const applicantWorkFlow =  ({token,username,tenant})=> {
                     applicants.updateApplicantInfo(applicantInfo,token).then((res)=>{
                         applicants.updateActivity(userName,"OfferRejected").then((res)=>{
                             console.log("Offer rejected")
+                            logger.processLogs(username,tenant,`Candidate ${username} Accepted offer`)
                         })
                     }).catch((err)=>console.log("Error rejecting offer"));
 

@@ -6,6 +6,8 @@ Amplify.configure(awsconfig);
 const recruiter = require("./recruiter");
 const employer = require("./employer");
 const applicant = require("./applicant");
+const admin = require("./admin");
+
 
 loginprompt = [
     {
@@ -57,7 +59,7 @@ Auth.signIn(loginanswer).then((res)=>{
     }
     else if(userInfo.tenant == "admins")
     {
-       adminWorkFlow(userInfo)
+       admin.adminWorkFlow(userInfo)
 
     }
     else if(userInfo.tenant == "applicants")

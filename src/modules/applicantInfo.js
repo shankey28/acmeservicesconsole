@@ -25,6 +25,23 @@ const Auth = require('aws-amplify').Auth;
 const gql = require('graphql-tag');
 let client;
 
+
+const listAllApplicants = gql(`
+query getAllApplicants {
+  listApplicantProfileNs {
+    items {
+      appStatus
+      payOpt
+      id
+      userName
+      billingStatus
+    }
+  }
+}
+`)
+
+
+
 const listfemaleapplicants = gql(`
 query listapplicants{
     listApplicantProfileNs(filter:{gender:{eq:Female}})
@@ -40,7 +57,7 @@ query listapplicants{
   }
 `)
 
-const listApplicant = gql(`
+const listApplicantByUserName = gql(`
 query listApplicant($userName: String){
     listApplicantProfileNs(userName:$userName){
       items
@@ -50,6 +67,19 @@ query listApplicant($userName: String){
       }
     }
   
+  }
+`)
+
+const listApplicantActivityByUserName = gql(`
+query listApplicantActivity($userName:String!) {
+    byUserName(userName:$userName)
+    {
+      items
+      {
+        activity
+        createdAt
+      }
+    }
   }
 `)
 
@@ -85,11 +115,12 @@ mutation addcomment($candidateID: ID!, $comment: String!, $applicantEmail: Strin
 `);
 
 const updateProfile = gql(`
-mutation updateprofile($candidateID:ID!,$candidateUserName:String!,$appStatus:ApplicantStatus,$employer:String) {
+mutation updateprofile($candidateID:ID!,$candidateUserName:String!,$appStatus:ApplicantStatus,$employer:String,$billingStatus:BillStatus) {
     updateApplicantProfileN(input:{
         id:$candidateID,
         userName:$candidateUserName,
         appStatus:$appStatus,
+        billingStatus:$billingStatus
         employer:$employer})
     {
       id
@@ -191,6 +222,21 @@ const getApplicants =  (username,token)=> new Promise((res,rej)=>{
         });
 
     }
+    else if(username.localeCompare("adminuser") == 0 )
+    {
+        client.hydrated().then(function (client) {
+            //Now run a query
+            client.query({ query: listAllApplicants  })
+                .then(function logData(result) {
+                    res(result.data.listApplicantProfileNs.items);
+                })
+                .catch((err)=>{
+                     rej(false);
+                });
+        
+        });
+
+    }
 
 });
 
@@ -203,7 +249,7 @@ const getApplicantStatus =  (userName,token)=> new Promise((res,rej)=>{
 
     client.hydrated().then(function (client) {
             //Now run a query
-        client.query({ query: listApplicant, variables:{userName: userName} })
+        client.query({ query: listApplicantByUserName, variables:{userName: userName} })
         .then(function logData(info) {
             //console.log('results of mutate: ', data);
             res(info.data.listApplicantProfileNs.items[0]);
@@ -280,7 +326,7 @@ const updateApplicantInfo =  (applicantInfo,token)=> new Promise((res,rej)=>{
     if(!client)
     initializeClient(token);
 
-    let {appStatus,employer,candidateID,candidateUserName,recruiterName} = applicantInfo;
+    let {appStatus,employer,candidateID,candidateUserName,recruiterName,billingStatus} = applicantInfo;
 
     if(!employer && appStatus == "SubmittedToEmployer")
     {
@@ -290,7 +336,7 @@ const updateApplicantInfo =  (applicantInfo,token)=> new Promise((res,rej)=>{
 
     client.hydrated().then(function (client) {
             //Now run a query
-        client.mutate({ mutation: updateProfile, variables:{candidateID:candidateID,candidateUserName:candidateUserName,appStatus:appStatus,employer:employer} })
+        client.mutate({ mutation: updateProfile, variables:{candidateID:candidateID,candidateUserName:candidateUserName,appStatus:appStatus,employer:employer,billingStatus:billingStatus} })
         .then(function logData(data) {
             //console.log('results of mutate: ', data);
             res(true)
@@ -310,11 +356,35 @@ const updateApplicantInfo =  (applicantInfo,token)=> new Promise((res,rej)=>{
 });
 
 
+const getApplicantActivity = (userName,token)=> new Promise((res,rej)=>{
+
+    if(!client)
+    initializeClient(token);
+
+    client.hydrated().then(function (client) {
+            //Now run a query
+        client.query({ query: listApplicantActivityByUserName, variables:{userName: userName} })
+        .then(function logData(info) {
+            //console.log('results of mutate: ', data);
+            res(info.data.byUserName.items);
+        })
+        .catch((err)=>{
+            console.log(err)
+            rej(false);
+        });
+
+    
+    });
+
+});
+
+
 module.exports = {
     getApplicants,
     addComment,
     updateApplicantInfo,
     getApplicantStatus,
-    updateActivity
+    updateActivity,
+    getApplicantActivity
 }
 
