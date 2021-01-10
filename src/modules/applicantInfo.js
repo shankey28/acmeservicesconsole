@@ -34,10 +34,26 @@ query listapplicants{
         id
         userName
         appStatus
+        email
       }
     }
   }
 `)
+
+const listApplicant = gql(`
+query listApplicant($userName: String){
+    listApplicantProfileNs(userName:$userName){
+      items
+      {
+        id
+        appStatus
+      }
+    }
+  
+  }
+`)
+
+
 
 const listByFocus = gql(`
 query getApplicantsbyCareerFocus($caFocus:CareerFocus!,$yOe:String) {
@@ -47,6 +63,7 @@ query getApplicantsbyCareerFocus($caFocus:CareerFocus!,$yOe:String) {
         id
         userName
         appStatus
+        email
       }
     }
   }
@@ -54,10 +71,12 @@ query getApplicantsbyCareerFocus($caFocus:CareerFocus!,$yOe:String) {
 `)
 
 const insertComment = gql(`
-mutation addcomment($candidateID: ID!, $comment: String!){
+mutation addcomment($candidateID: ID!, $comment: String!, $applicantEmail: String){
     createRecuriterCommentN(input:{ 
         candidateID: $candidateID
         comment: $comment
+        applicantEmail: $applicantEmail
+
     })
     {
       id
@@ -75,9 +94,22 @@ mutation updateprofile($candidateID:ID!,$candidateUserName:String!,$appStatus:Ap
     {
       id
     }
-  }
-  
+  } 
 `);
+
+const createActivity = gql(`
+mutation createActivity($userName: String!,$activity:ApplicantAction){
+    createApplicantActivityN(input:{
+        userName:$userName,
+        activity:$activity})
+    {
+      id
+    }
+  }
+
+`);
+
+
 
 
 // Set up Apollo client
@@ -100,7 +132,7 @@ const getApplicants =  (username,token)=> new Promise((res,rej)=>{
     if(!client)
     initializeClient(token);
 
-    if(username == ("brooklynf" || "employerf")){
+    if(username.localeCompare("brooklynf") == 0 || username.localeCompare("employerf") == 0){
 
             client.hydrated().then(function (client) {
                 //Now run a query
@@ -114,7 +146,7 @@ const getApplicants =  (username,token)=> new Promise((res,rej)=>{
             
             });
     }
-    else if(username == ("atlanta4" || "employer4"))
+    else if(username.localeCompare("atlanta4") == 0 || username.localeCompare("employer4") == 0)
     {
         client.hydrated().then(function (client) {
             //Now run a query
@@ -129,7 +161,7 @@ const getApplicants =  (username,token)=> new Promise((res,rej)=>{
         });
 
     }
-    else if(username == ("memphiso" || "employero"))
+    else if(username.localeCompare("memphiso") == 0 || username.localeCompare("employero") == 0)
     {
         client.hydrated().then(function (client) {
             //Now run a query
@@ -144,7 +176,7 @@ const getApplicants =  (username,token)=> new Promise((res,rej)=>{
         });
 
     }
-    else if(username == ("stlouish" || "employerh"))
+    else if(username.localeCompare("stlouish") == 0 || username.localeCompare("employerh") == 0)
     {
         client.hydrated().then(function (client) {
             //Now run a query
@@ -163,14 +195,40 @@ const getApplicants =  (username,token)=> new Promise((res,rej)=>{
 });
 
 
-const addComment =  (id,comment,token)=> new Promise((res,rej)=>{
+
+const getApplicantStatus =  (userName,token)=> new Promise((res,rej)=>{
+
+    if(!client)
+    initializeClient(token);
+
+    client.hydrated().then(function (client) {
+            //Now run a query
+        client.query({ query: listApplicant, variables:{userName: userName} })
+        .then(function logData(info) {
+            //console.log('results of mutate: ', data);
+            res(info.data.listApplicantProfileNs.items[0]);
+        })
+        .catch((err)=>{
+            console.log(err)
+            rej(false);
+        });
+
+    
+    });
+
+});
+
+
+const addComment =  (candidateInfo,comment,token)=> new Promise((res,rej)=>{
 
         if(!client)
         initializeClient(token);
 
+        const info = candidateInfo.split(",")
+
         client.hydrated().then(function (client) {
                 //Now run a query
-            client.mutate({ mutation: insertComment, variables:{candidateID: id,comment: comment } })
+            client.mutate({ mutation: insertComment, variables:{candidateID: info[0],comment: comment, applicantEmail: info[1]} })
             .then(function logData(data) {
                 //console.log('results of mutate: ', data);
                 res(true)
@@ -185,7 +243,31 @@ const addComment =  (id,comment,token)=> new Promise((res,rej)=>{
 
 });
 
-//Recruiter to Employer mapping
+
+const updateActivity =  (userName,activity,token)=> new Promise((res,rej)=>{
+
+    if(!client)
+    initializeClient(token);
+
+    client.hydrated().then(function (client) {
+            //Now run a query
+        client.mutate({ mutation: createActivity, variables:{userName: userName, activity: activity} })
+        .then(function logData(data) {
+            //console.log('results of mutate: ', data);
+            res(true)
+        })
+        .catch((err)=>{
+            console.log(err)
+            rej(false);
+        });
+
+    
+    });
+
+});
+
+
+//Recruiter to Employer mapping to assign employer when recruiter submits for interview
 const recruiterMapping = {
     brooklynf:"employerf",
     atlanta4:"employer4",
@@ -232,6 +314,7 @@ module.exports = {
     getApplicants,
     addComment,
     updateApplicantInfo,
-    //getApplicantsByEmployer
+    getApplicantStatus,
+    updateActivity
 }
 
