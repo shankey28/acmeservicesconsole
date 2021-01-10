@@ -33,30 +33,20 @@ query listapplicants{
       {
         id
         userName
+        appStatus
       }
     }
   }
-`)
-const getApplicantsbyCareerFocus = gql(`
-query getApplicantsbyCareerFocus($caFocus:CareerFocus!,$yOe:YearOfExperience!) {
-    byCareerFocus(input: {caFocus:$caFocus, yOe: { eq: $yOe }}) {
-      items 
-      {
-        id
-        userName
-      }
-    }
-  }
-
 `)
 
 const listByFocus = gql(`
-query getApplicantsbyCareerFocus($caFocus:CareerFocus!,$yOe:String!) {
+query getApplicantsbyCareerFocus($caFocus:CareerFocus!,$yOe:String) {
     byCareerFocus(caFocus:$caFocus, yOe: { eq: $yOe }) {
       items 
       {
         id
         userName
+        appStatus
       }
     }
   }
@@ -143,7 +133,7 @@ const getApplicants =  (username,token)=> new Promise((res,rej)=>{
     {
         client.hydrated().then(function (client) {
             //Now run a query
-            client.query({ query: listByFocus,variables:{caFocus:"Other"}  })
+            client.query({ query: listByFocus,variables:{caFocus:"Other",yOe: "Lessthan4"}  })
                 .then(function logData(result) {
                     res(result.data.byCareerFocus.items);
                 })
@@ -241,6 +231,7 @@ const updateApplicantInfo =  (applicantInfo,token)=> new Promise((res,rej)=>{
 module.exports = {
     getApplicants,
     addComment,
-    updateApplicantInfo
+    updateApplicantInfo,
+    //getApplicantsByEmployer
 }
 
