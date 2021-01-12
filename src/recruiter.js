@@ -42,7 +42,8 @@ const recruiterWorkFlow =  ({token,username,tenant})=> {
                 .then((res)=>{
                     if(res)
                     console.log("Comment added successfully");
-                    logger.processLogs(username,tenant,`Candidate ${applicantUserName} added comment`)
+                    logger.processLogs(username,tenant,`Candidate ${applicantUserName} added comment`);
+                    recruiterWorkFlow({token,username,tenant});
                 })
 
             }).catch((err)=>{
@@ -60,7 +61,7 @@ const recruiterWorkFlow =  ({token,username,tenant})=> {
             applicants.getApplicants(username,token).then((result)=> {
                 let candidatelist = [];
                 let candidateUserNames = result.reduce((candidateUserNames, item)=> {
-                    if(item.appStatus == "New")
+                    if(item.appStatus == "New" || item.appStatus == "InterviewRejected")
                     {
                      candidateUserNames.push(item.userName);
                     }
@@ -94,7 +95,8 @@ const recruiterWorkFlow =  ({token,username,tenant})=> {
             applicants.updateApplicantInfo(applicantInfo,token)
             .then((res) => {
                 console.log("Candidate referred to employer succesfully");
-                logger.processLogs(username,tenant,`Candidate ${applicantUserName} resume submitted to employer`)
+                logger.processLogs(username,tenant,`Candidate ${applicantUserName} resume submitted to employer`);
+                recruiterWorkFlow({token,username,tenant});
             })
             .catch((err)=>console.log("Error referring candidate",err));
 

@@ -36,6 +36,7 @@ const adminWorkFlow =  ({token,username,tenant})=> {
                  return activityDetails;
              },[])
              console.table(activityDetails);
+             adminWorkFlow({token,username,tenant});
         })
          .catch((err)=>console.log("Error getting candidate activity report",err));
          })
@@ -50,7 +51,10 @@ const adminWorkFlow =  ({token,username,tenant})=> {
              let candidatelist = [];
              let candidateUserNames = result.reduce((candidateUserNames, item)=> {
                  //Filter candidates who are interviewed already
-                 if((item.appStatus == "EmployerInterview" && item.payOpt == "PerInterview" && item.billingStatus == "NotBilled") || 
+                 if(((item.appStatus.localeCompare("InterviewAccepted") == 0 ||
+                 item.appStatus.localeCompare("EmployerOffered") == 0  || 
+                 item.appStatus.localeCompare("ApplicantAccepted") == 0  || 
+                 item.appStatus.localeCompare("ApplicantRejected") == 0  )  && item.payOpt == "PerInterview" && item.billingStatus == "NotBilled") || 
                  (item.appStatus == "ApplicantAccepted" && item.payOpt == "OneTimeFee" && item.billingStatus == "NotBilled"))
                  {
                   candidateUserNames.push(item.userName);
@@ -83,7 +87,10 @@ const adminWorkFlow =  ({token,username,tenant})=> {
          }
          //Set the applicant status to EmployerOffered
          applicants.updateApplicantInfo(applicantInfo,token)
-         .then((res) => console.log("Candidate Invoiced succesfully"))
+         .then((res) => {
+             console.log("Candidate Invoiced succesfully");
+             adminWorkFlow({token,username,tenant});
+            })
          .catch((err)=>console.log("Error creating Invoice for candidate",err));
 
      })
@@ -99,10 +106,11 @@ else if(JSON.stringify(answer.adminchoice).search("Status") != -1)
          applicants.getApplicants(username,token).then((result)=> {
 
             const applicantdetails = result.reduce((applicantdetails,item)=>{
-                applicantdetails.push({UserName:item.userName,AppStatus:item.appStatus,BillingStatus:item.billingStatus})
+                applicantdetails.push({UserName:item.userName,AppStatus:item.appStatus,PaymentOption:item.payOpt,BillingStatus:item.billingStatus})
                 return applicantdetails;
             },[])
             console.table(applicantdetails);
+            adminWorkFlow({token,username,tenant});
      }
      )
 }

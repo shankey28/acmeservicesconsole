@@ -167,7 +167,7 @@ const getApplicants =  (username,token)=> new Promise((res,rej)=>{
 
             client.hydrated().then(function (client) {
                 //Now run a query
-                client.query({ query: listfemaleapplicants })
+                client.query({ query: listfemaleapplicants ,fetchPolicy: 'network-only'})
                     .then(function logData(result) {
                         res(result.data.listApplicantProfileNs.items);
                     })
@@ -181,7 +181,7 @@ const getApplicants =  (username,token)=> new Promise((res,rej)=>{
     {
         client.hydrated().then(function (client) {
             //Now run a query
-            client.query({ query: listByFocus,variables:{caFocus:"Other", yOe: "Morethan4"}  })
+            client.query({ query: listByFocus,fetchPolicy: 'network-only',variables:{caFocus:"Other", yOe: "Morethan4"}  })
                 .then(function logData(result) {
                     res(result.data.byCareerFocus.items);
                 })
@@ -196,7 +196,7 @@ const getApplicants =  (username,token)=> new Promise((res,rej)=>{
     {
         client.hydrated().then(function (client) {
             //Now run a query
-            client.query({ query: listByFocus,variables:{caFocus:"Other",yOe: "Lessthan4"}  })
+            client.query({ query: listByFocus,fetchPolicy: 'network-only',variables:{caFocus:"Other",yOe: "Lessthan4"}  })
                 .then(function logData(result) {
                     res(result.data.byCareerFocus.items);
                 })
@@ -211,7 +211,7 @@ const getApplicants =  (username,token)=> new Promise((res,rej)=>{
     {
         client.hydrated().then(function (client) {
             //Now run a query
-            client.query({ query: listByFocus,variables:{caFocus:"HealthCare"}  })
+            client.query({ query: listByFocus,fetchPolicy: 'network-only',variables:{caFocus:"HealthCare"}  })
                 .then(function logData(result) {
                     res(result.data.byCareerFocus.items);
                 })
@@ -226,7 +226,7 @@ const getApplicants =  (username,token)=> new Promise((res,rej)=>{
     {
         client.hydrated().then(function (client) {
             //Now run a query
-            client.query({ query: listAllApplicants  })
+            client.query({ query: listAllApplicants,fetchPolicy: 'network-only'  })
                 .then(function logData(result) {
                     res(result.data.listApplicantProfileNs.items);
                 })
@@ -249,7 +249,7 @@ const getApplicantStatus =  (userName,token)=> new Promise((res,rej)=>{
 
     client.hydrated().then(function (client) {
             //Now run a query
-        client.query({ query: listApplicantByUserName, variables:{userName: userName} })
+        client.query({ query: listApplicantByUserName,fetchPolicy: 'network-only', variables:{userName: userName} })
         .then(function logData(info) {
             //console.log('results of mutate: ', data);
             res(info.data.listApplicantProfileNs.items[0]);
@@ -274,7 +274,7 @@ const addComment =  (candidateInfo,comment,token)=> new Promise((res,rej)=>{
 
         client.hydrated().then(function (client) {
                 //Now run a query
-            client.mutate({ mutation: insertComment, variables:{candidateID: info[0],comment: comment, applicantEmail: info[1]} })
+            client.mutate({ mutation: insertComment,fetchPolicy: 'no-cache', variables:{candidateID: info[0],comment: comment, applicantEmail: info[1]} })
             .then(function logData(data) {
                 //console.log('results of mutate: ', data);
                 res(true)
@@ -297,7 +297,7 @@ const updateActivity =  (userName,activity,token)=> new Promise((res,rej)=>{
 
     client.hydrated().then(function (client) {
             //Now run a query
-        client.mutate({ mutation: createActivity, variables:{userName: userName, activity: activity} })
+        client.mutate({ mutation: createActivity,fetchPolicy: 'no-cache', variables:{userName: userName, activity: activity} })
         .then(function logData(data) {
             //console.log('results of mutate: ', data);
             res(true)
@@ -336,7 +336,7 @@ const updateApplicantInfo =  (applicantInfo,token)=> new Promise((res,rej)=>{
 
     client.hydrated().then(function (client) {
             //Now run a query
-        client.mutate({ mutation: updateProfile, variables:{candidateID:candidateID,candidateUserName:candidateUserName,appStatus:appStatus,employer:employer,billingStatus:billingStatus} })
+        client.mutate({ mutation: updateProfile, fetchPolicy: 'no-cache', variables:{candidateID:candidateID,candidateUserName:candidateUserName,appStatus:appStatus,employer:employer,billingStatus:billingStatus} })
         .then(function logData(data) {
             //console.log('results of mutate: ', data);
             res(true)
@@ -363,7 +363,7 @@ const getApplicantActivity = (userName,token)=> new Promise((res,rej)=>{
 
     client.hydrated().then(function (client) {
             //Now run a query
-        client.query({ query: listApplicantActivityByUserName, variables:{userName: userName} })
+        client.query({ query: listApplicantActivityByUserName,fetchPolicy: 'network-only', variables:{userName: userName} })
         .then(function logData(info) {
             //console.log('results of mutate: ', data);
             res(info.data.byUserName.items);
@@ -372,8 +372,7 @@ const getApplicantActivity = (userName,token)=> new Promise((res,rej)=>{
             console.log(err)
             rej(false);
         });
-
-    
+   
     });
 
 });

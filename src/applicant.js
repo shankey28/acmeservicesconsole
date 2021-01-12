@@ -48,9 +48,52 @@ const applicantWorkFlow =  ({token,username,tenant})=> {
                 }
             })
         }
+        else if(res.appStatus.localeCompare("EmployerInterview") ==0)
+        {
+            inquirer.prompt({
+                type: "list",
+                name: "applicantchoice",
+                message: "What would like to do?",
+                choices: ["Accept Interview","Reject Interview"]
+            }).then((answer)=>{
+                if(JSON.stringify(answer.applicantchoice).search("Accept") != -1)
+                {
+                    const applicantInfo = {
+                        //Set the applicant status to job interview
+                        appStatus : "InterviewAccepted",
+                        candidateID : res.id,
+                        candidateUserName : username
+                    }
+                    applicants.updateApplicantInfo(applicantInfo,token).then((res)=>{
+                        applicants.updateActivity(username,"InterviewAccepted").then((res)=>{
+                            console.log("Interview Accepted!")
+                            logger.processLogs(username,tenant,`Candidate ${username} Accepted Interview`)
+                    
+                        })
+                    }).catch((err)=>console.log("Error Accepting Interview"));
+
+                }
+                else
+                {
+                    const applicantInfo = {
+                        //Set the applicant status to job interview
+                        appStatus : "InterviewRejected",
+                        candidateID : res.id,
+                        candidateUserName : userName
+                    }
+                    applicants.updateApplicantInfo(applicantInfo,token).then((res)=>{
+                        applicants.updateActivity(userName,"InterviewRejected").then((res)=>{
+                            console.log("Interview rejected")
+                            logger.processLogs(username,tenant,`Candidate ${username} Rejected Interview`)
+                        })
+                    }).catch((err)=>console.log("Error rejecting Interview"));
+
+                }
+            })
+        }
         else
         {
-            console.log("No offers to Accept or Reject")
+            console.log("No Interview/Offers to Accept or Reject")
         }
 
     })

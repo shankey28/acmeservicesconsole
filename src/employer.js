@@ -30,7 +30,7 @@ const employerWorkFlow =  ({token,username,tenant})=> {
              if(candidateUserNames.length == 0) 
              {
                  console.log("No candidates to Interview");
-                 return;
+                 employerWorkFlow({token,username,tenant});
              }
 
 
@@ -57,7 +57,8 @@ const employerWorkFlow =  ({token,username,tenant})=> {
          applicants.updateApplicantInfo(applicantInfo,token)
          .then((res) => {
              console.log("Candidate scheduled for interview");
-             logger.processLogs(username,tenant,`Schedule candidate ${applicantUserName} for Interview`)
+             logger.processLogs(username,tenant,`Schedule candidate ${applicantUserName} for Interview`);
+             employerWorkFlow({token,username,tenant});
          })
          .catch((err)=>console.log("Error scheduling candidate interview",err));
 
@@ -73,7 +74,7 @@ const employerWorkFlow =  ({token,username,tenant})=> {
              let candidatelist = [];
              let candidateUserNames = result.reduce((candidateUserNames, item)=> {
                  //Filter candidates who are interviewed already
-                 if(item.appStatus == "EmployerInterview")
+                 if(item.appStatus == "InterviewAccepted")
                  {
                   candidateUserNames.push(item.userName);
                  }
@@ -108,7 +109,8 @@ const employerWorkFlow =  ({token,username,tenant})=> {
          applicants.updateApplicantInfo(applicantInfo,token)
          .then((res) => {
              console.log("Candidate offered employment succesfully");
-             logger.processLogs(username,tenant,`Offered candidate ${applicantUserName}`)
+             logger.processLogs(username,tenant,`Offered candidate ${applicantUserName}`);
+             employerWorkFlow({token,username,tenant});
          })
          .catch((err)=>console.log("Error referring candidate",err));
 
