@@ -76,7 +76,8 @@ const recruiterWorkFlow = ({ token, username, tenant }) => {
           let candidateUserNames = result.reduce((candidateUserNames, item) => {
             if (
               item.appStatus == "New" ||
-              item.appStatus == "InterviewRejected"
+              item.appStatus == "InterviewRejected" ||
+              item.appStatus == "ApplicantRejected"
             ) {
               candidateUserNames.push(item.userName);
             }
@@ -108,7 +109,7 @@ const recruiterWorkFlow = ({ token, username, tenant }) => {
                 appStatus: "SubmittedToEmployer",
                 candidateID: candidate[0][applicantUserName],
                 candidateUserName: applicantUserName,
-                recruiterName: username,
+                recruiterGroup: tenant,
               };
               //Refer candidate to employer
               applicants
@@ -125,8 +126,8 @@ const recruiterWorkFlow = ({ token, username, tenant }) => {
                 .catch((err) => console.log("Error referring candidate", err));
             });
         });
-        recruiterWorkFlow({ token, username, tenant });
       }
+      recruiterWorkFlow({ token, username, tenant });
     })
     .catch((err) =>
       console.log("Recruiter comment/refer process exited with error!", err)

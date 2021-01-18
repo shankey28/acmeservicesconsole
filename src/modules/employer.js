@@ -18,8 +18,11 @@ const employerWorkFlow = ({ token, username, tenant }) => {
         applicants.getApplicants(tenant, token).then((result) => {
           let candidatelist = [];
           let candidateUserNames = result.reduce((candidateUserNames, item) => {
-            //Filter candidates that are submitted to employer
-            if (item.appStatus == "SubmittedToEmployer") {
+            //Filter candidates that are submitted to employer and employer matches logged in employer
+            if (
+              item.appStatus == "SubmittedToEmployer" &&
+              item.employer == tenant
+            ) {
               candidateUserNames.push(item.userName);
             }
             return candidateUserNames;
@@ -51,7 +54,7 @@ const employerWorkFlow = ({ token, username, tenant }) => {
                 appStatus: "EmployerInterview",
                 candidateID: candidate[0][applicantUserName],
                 candidateUserName: applicantUserName,
-                employer: username,
+                employer: tenant,
               };
               //Set candidate status to EmployerInterview
               applicants
@@ -70,7 +73,6 @@ const employerWorkFlow = ({ token, username, tenant }) => {
                 );
             });
         });
-        employerWorkFlow({ token, username, tenant });
       } else {
         //Offer candidate flow
 
@@ -79,7 +81,10 @@ const employerWorkFlow = ({ token, username, tenant }) => {
           let candidatelist = [];
           let candidateUserNames = result.reduce((candidateUserNames, item) => {
             //Filter candidates who are interviewed already
-            if (item.appStatus == "InterviewAccepted") {
+            if (
+              item.appStatus == "InterviewAccepted" &&
+              item.employer == tenant
+            ) {
               candidateUserNames.push(item.userName);
             }
             return candidateUserNames;
@@ -111,7 +116,7 @@ const employerWorkFlow = ({ token, username, tenant }) => {
                 appStatus: "EmployerOffered",
                 candidateID: candidate[0][applicantUserName],
                 candidateUserName: applicantUserName,
-                recruiterName: username,
+                employer: tenant,
               };
               //Set the applicant status to EmployerOffered
               applicants
@@ -128,7 +133,6 @@ const employerWorkFlow = ({ token, username, tenant }) => {
                 .catch((err) => console.log("Error referring candidate", err));
             });
         });
-        employerWorkFlow({ token, username, tenant });
       }
     })
     .catch((err) =>

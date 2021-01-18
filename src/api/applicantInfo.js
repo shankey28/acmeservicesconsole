@@ -48,6 +48,7 @@ query listapplicants{
         userName
         appStatus
         email
+        employer
       }
     }
   }
@@ -88,6 +89,7 @@ query getApplicantsbyCareerFocus($caFocus:CareerFocus!,$yOe:String) {
         userName
         appStatus
         email
+        employer
       }
     }
   }
@@ -315,10 +317,10 @@ const updateActivity = (userName, activity, token) =>
 
 //Recruiter to Employer mapping to assign employer when recruiter submits for interview
 const recruiterMapping = {
-  brooklynf: "employerf",
-  atlanta4: "employer4",
-  stlouish: "employerh",
-  memphiso: "employero",
+  recruiterf: "employerf",
+  recruiter4: "employer4",
+  recruiterh: "employerh",
+  recruitero: "employero",
 };
 
 const updateApplicantInfo = (applicantInfo, token) =>
@@ -330,12 +332,12 @@ const updateApplicantInfo = (applicantInfo, token) =>
       employer,
       candidateID,
       candidateUserName,
-      recruiterName,
+      recruiterGroup,
       billingStatus,
     } = applicantInfo;
 
     if (!employer && appStatus == "SubmittedToEmployer") {
-      employer = recruiterMapping[recruiterName];
+      employer = recruiterMapping[recruiterGroup];
     }
 
     client
