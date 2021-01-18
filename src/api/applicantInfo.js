@@ -152,18 +152,18 @@ function initializeClient(token){
             type: type,
             jwtToken: token
         },
-        disableOffline: true      //Uncomment for AWS Lambda
+        disableOffline: true     
     });
     
 
 }
 
 
-const getApplicants =  (username,token)=> new Promise((res,rej)=>{
+const getApplicants =  (tenant,token)=> new Promise((res,rej)=>{
     if(!client)
     initializeClient(token);
 
-    if(username.localeCompare("brooklynf") == 0 || username.localeCompare("employerf") == 0){
+    if(tenant.localeCompare("recruiterf") == 0 || tenant.localeCompare("employerf") == 0){
 
             client.hydrated().then(function (client) {
                 //Now run a query
@@ -177,7 +177,7 @@ const getApplicants =  (username,token)=> new Promise((res,rej)=>{
             
             });
     }
-    else if(username.localeCompare("atlanta4") == 0 || username.localeCompare("employer4") == 0)
+    else if(tenant.localeCompare("recruiter4") == 0 || tenant.localeCompare("employer4") == 0)
     {
         client.hydrated().then(function (client) {
             //Now run a query
@@ -192,7 +192,7 @@ const getApplicants =  (username,token)=> new Promise((res,rej)=>{
         });
 
     }
-    else if(username.localeCompare("memphiso") == 0 || username.localeCompare("employero") == 0)
+    else if(tenant.localeCompare("recruitero") == 0 || tenant.localeCompare("employero") == 0)
     {
         client.hydrated().then(function (client) {
             //Now run a query
@@ -207,7 +207,7 @@ const getApplicants =  (username,token)=> new Promise((res,rej)=>{
         });
 
     }
-    else if(username.localeCompare("stlouish") == 0 || username.localeCompare("employerh") == 0)
+    else if(tenant.localeCompare("recruiterh") == 0 || tenant.localeCompare("employerh") == 0)
     {
         client.hydrated().then(function (client) {
             //Now run a query
@@ -222,7 +222,7 @@ const getApplicants =  (username,token)=> new Promise((res,rej)=>{
         });
 
     }
-    else if(username.localeCompare("adminuser") == 0 )
+    else if(tenant.localeCompare("admins") == 0 )
     {
         client.hydrated().then(function (client) {
             //Now run a query

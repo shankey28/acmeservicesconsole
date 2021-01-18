@@ -1,5 +1,5 @@
-const applicants = require("./modules/applicantInfo");
-const logger = require("./api/cw");
+const applicants = require("../api/applicantInfo");
+const logger = require("../api/cw");
 const inquirer = require("inquirer");
 
 const recruiterWorkFlow =  ({token,username,tenant})=> {
@@ -15,7 +15,7 @@ const recruiterWorkFlow =  ({token,username,tenant})=> {
         if(JSON.stringify(answer.recruiterchoice).search("Comment") != -1)
         {   
             //Get the list of All Applicants
-            applicants.getApplicants(username,token).then((result)=> {
+            applicants.getApplicants(tenant,token).then((result)=> {
                 let candidatelist = [];
                 let candidateUserNames = result.map((item)=> item.userName);
                 result.forEach((item)=>{
@@ -58,7 +58,7 @@ const recruiterWorkFlow =  ({token,username,tenant})=> {
         else { //Refer candidate flow
 
             //Get the list of All Applicants
-            applicants.getApplicants(username,token).then((result)=> {
+            applicants.getApplicants(tenant,token).then((result)=> {
                 let candidatelist = [];
                 let candidateUserNames = result.reduce((candidateUserNames, item)=> {
                     if(item.appStatus == "New" || item.appStatus == "InterviewRejected")
@@ -103,6 +103,7 @@ const recruiterWorkFlow =  ({token,username,tenant})=> {
         })
 
     })
+    recruiterWorkFlow({token,username,tenant});
 }
        
 }).catch((err)=>console.log("Recruiter comment/refer process exited with error!",err));

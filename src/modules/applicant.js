@@ -1,6 +1,6 @@
-const applicants = require("./modules/applicantInfo");
+const applicants = require("../api/applicantInfo");
 const inquirer = require("inquirer");
-const logger = require("./api/cw");
+const logger = require("../api/cw");
 
 const applicantWorkFlow =  ({token,username,tenant})=> {
     //Get Applicant status data choice
@@ -36,10 +36,10 @@ const applicantWorkFlow =  ({token,username,tenant})=> {
                         //Set the applicant status to job interview
                         appStatus : "ApplicantRejected",
                         candidateID : res.id,
-                        candidateUserName : userName
+                        candidateUserName : username
                     }
                     applicants.updateApplicantInfo(applicantInfo,token).then((res)=>{
-                        applicants.updateActivity(userName,"OfferRejected").then((res)=>{
+                        applicants.updateActivity(username,"OfferRejected").then((res)=>{
                             console.log("Offer rejected")
                             logger.processLogs(username,tenant,`Candidate ${username} Accepted offer`)
                         })
@@ -79,10 +79,10 @@ const applicantWorkFlow =  ({token,username,tenant})=> {
                         //Set the applicant status to job interview
                         appStatus : "InterviewRejected",
                         candidateID : res.id,
-                        candidateUserName : userName
+                        candidateUserName : username
                     }
                     applicants.updateApplicantInfo(applicantInfo,token).then((res)=>{
-                        applicants.updateActivity(userName,"InterviewRejected").then((res)=>{
+                        applicants.updateActivity(username,"InterviewRejected").then((res)=>{
                             console.log("Interview rejected")
                             logger.processLogs(username,tenant,`Candidate ${username} Rejected Interview`)
                         })

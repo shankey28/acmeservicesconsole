@@ -1,6 +1,6 @@
-const applicants = require("./modules/applicantInfo");
+const applicants = require("../api/applicantInfo");
 const inquirer = require("inquirer");
-const logger = require("./api/cw");
+const logger = require("../api/cw");
 
 const employerWorkFlow =  ({token,username,tenant})=> {
     //Get Employer's choice
@@ -16,7 +16,7 @@ const employerWorkFlow =  ({token,username,tenant})=> {
      {   
 
          //Get the list of All Applicants
-         applicants.getApplicants(username,token).then((result)=> {
+         applicants.getApplicants(tenant,token).then((result)=> {
              let candidatelist = [];
              let candidateUserNames = result.reduce((candidateUserNames, item)=> {
                  //Filter candidates that are submitted to employer
@@ -30,9 +30,8 @@ const employerWorkFlow =  ({token,username,tenant})=> {
              if(candidateUserNames.length == 0) 
              {
                  console.log("No candidates to Interview");
-                 employerWorkFlow({token,username,tenant});
+                 return;
              }
-
 
              result.forEach((item)=>{
                  candidatelist.push({[item.userName] : item.id})
@@ -66,11 +65,12 @@ const employerWorkFlow =  ({token,username,tenant})=> {
 
      }
      )
+     employerWorkFlow({token,username,tenant});
      }
      else { //Offer candidate flow
 
          //Get the list of All Applicants
-         applicants.getApplicants(username,token).then((result)=> {
+         applicants.getApplicants(tenant,token).then((result)=> {
              let candidatelist = [];
              let candidateUserNames = result.reduce((candidateUserNames, item)=> {
                  //Filter candidates who are interviewed already
@@ -118,7 +118,7 @@ const employerWorkFlow =  ({token,username,tenant})=> {
 
 
  })
-
+ employerWorkFlow({token,username,tenant});
 }
 
 }).catch((err)=>console.log("Recruiter comment/refer process exited with error!",err));

@@ -3,10 +3,10 @@ const Amplify = require('aws-amplify').Amplify;
 const Auth = require('aws-amplify').Auth;
 const awsconfig = require('./aws-exports');
 Amplify.configure(awsconfig);
-const recruiter = require("./recruiter");
-const employer = require("./employer");
-const applicant = require("./applicant");
-const admin = require("./admin");
+const recruiter = require("./modules/recruiter");
+const employer = require("./modules/employer");
+const applicant = require("./modules/applicant");
+const admin = require("./modules/admin");
 
 
 loginprompt = [
@@ -48,21 +48,21 @@ Auth.signIn(loginanswer).then((res)=>{
     
 }
 ).then((userInfo)=> {
-    if(userInfo.tenant == "recruiter")
+    if(JSON.stringify(userInfo.tenant).search("recruiter") != -1)
     {
         recruiter.recruiterWorkFlow(userInfo);
     }
-    else if(userInfo.tenant == "employer")
+    else if(JSON.stringify(userInfo.tenant).search("employer") != -1)
     {
         employer.employerWorkFlow(userInfo)
 
     }
-    else if(userInfo.tenant == "admins")
+    else if(JSON.stringify(userInfo.tenant).search("admins") != -1)
     {
        admin.adminWorkFlow(userInfo)
 
     }
-    else if(userInfo.tenant == "applicants")
+    else if(JSON.stringify(userInfo.tenant).search("applicants") != -1)
     {
         applicant.applicantWorkFlow(userInfo)
 

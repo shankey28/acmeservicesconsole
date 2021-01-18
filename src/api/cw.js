@@ -58,7 +58,7 @@ const moment = require("moment")
             let logeventsparams = {
                 logEvents: [ /* required */
                   {
-                    message: "username:"+username + ", usergroup:"+usergroup +  " , action:" + action , /* required */
+                    message: JSON.stringify({username ,usergroup, action}), /* required */
                     timestamp: date /* required */
                   },
                   /* more items */
@@ -74,7 +74,7 @@ const moment = require("moment")
             let logeventsparams = {
                 logEvents: [ /* required */
                   {
-                    message: "username:"+username + ", usergroup:"+usergroup +  " , action:" + action , /* required */
+                    message: JSON.stringify({username ,usergroup, action}),
                     timestamp: date /* required */
                   },
                   /* more items */

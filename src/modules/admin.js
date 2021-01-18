@@ -1,7 +1,6 @@
-const applicants = require("./modules/applicantInfo");
+const applicants = require("../api/applicantInfo");
 const inquirer = require("inquirer");
-
-
+const logger = require("../api/cw");
 
 const adminWorkFlow =  ({token,username,tenant})=> {
     //Get Employer's choice
@@ -17,7 +16,7 @@ const adminWorkFlow =  ({token,username,tenant})=> {
      {   
 
          //Get the list of All Applicants
-         applicants.getApplicants(username,token).then((result)=> {
+         applicants.getApplicants(tenant,token).then((result)=> {
             let candidatelist = [];
             let candidateUserNames = result.map((item)=> item.userName);
          inquirer.prompt({
@@ -36,6 +35,7 @@ const adminWorkFlow =  ({token,username,tenant})=> {
                  return activityDetails;
              },[])
              console.table(activityDetails);
+             logger.processLogs(username,tenant,`Candidate ${applicantUserName} viewed activity`);
              adminWorkFlow({token,username,tenant});
         })
          .catch((err)=>console.log("Error getting candidate activity report",err));
@@ -47,7 +47,7 @@ const adminWorkFlow =  ({token,username,tenant})=> {
      else if(JSON.stringify(answer.adminchoice).search("Create") != -1) { //Generate Invoice flow
 
          //Get the list of All Applicants
-         applicants.getApplicants(username,token).then((result)=> {
+         applicants.getApplicants(tenant,token).then((result)=> {
              let candidatelist = [];
              let candidateUserNames = result.reduce((candidateUserNames, item)=> {
                  //Filter candidates who are interviewed already
@@ -89,6 +89,7 @@ const adminWorkFlow =  ({token,username,tenant})=> {
          applicants.updateApplicantInfo(applicantInfo,token)
          .then((res) => {
              console.log("Candidate Invoiced succesfully");
+             logger.processLogs(username,tenant,`Candidate ${applicantUserName} invoiced`);
              adminWorkFlow({token,username,tenant});
             })
          .catch((err)=>console.log("Error creating Invoice for candidate",err));
@@ -103,13 +104,14 @@ else if(JSON.stringify(answer.adminchoice).search("Status") != -1)
 {
 
          //Get the list of All Applicants
-         applicants.getApplicants(username,token).then((result)=> {
+         applicants.getApplicants(tenant,token).then((result)=> {
 
             const applicantdetails = result.reduce((applicantdetails,item)=>{
                 applicantdetails.push({UserName:item.userName,AppStatus:item.appStatus,PaymentOption:item.payOpt,BillingStatus:item.billingStatus})
                 return applicantdetails;
             },[])
             console.table(applicantdetails);
+            logger.processLogs(username,tenant,`viewed invoice status`);
             adminWorkFlow({token,username,tenant});
      }
      )
